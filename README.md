@@ -3,9 +3,11 @@ This is a tech test many ask. There are many different "solutions" but there is 
 
 C# Programming Test: Robustly Prime Numbers 
 
-Background For the purposes of this programming test, we define a Robustly Prime Number (RPN) to be a prime number which has no ‘0’ digits and remains prime when you remove any contiguous sequence of digits from the left of it. For example: 
-  5167 is an RPN, since 5167, 167, 67 and 7 are all prime;
-  2179 is not an RPN, even though 2179, 179 and 79 are prime, since 9 is not prime. 
+Background For the purposes of this programming test, we define a Robustly Prime Number (RPN) to be a prime number which has no ‘0’ digits and remains prime when you remove any contiguous sequence of digits from the left of it.
+
+For example: 
+5167 is an RPN, since 5167, 167, 67 and 7 are all prime;
+2179 is not an RPN, even though 2179, 179 and 79 are prime, since 9 is not prime. 
 
 There are 2209 RPNs under 2 31 .
 
