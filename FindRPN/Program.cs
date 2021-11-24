@@ -8,21 +8,20 @@ if (!File.Exists(dataFilePath))
     Console.WriteLine("Preparing...this may take a few minutes.");
 
     var primes = GeneratePrimes.GeneratePrimesList();
-    //strip out the non-RPN
-    for (int i = 10; i < primes.Length; i++)
-    {
-        if (primes[i] == 1)
-        {
-            primes[i] = CheckIsRPN.isRPN((uint)i, primes);
-        }
-    }
-    //write this out to a file! we'll suck it each time below!
-    using(var primesFile = new BinaryWriter(File.OpenWrite(dataFilePath)))
+    //strip out the non-RPN and write to the file at the same time
+    using (var primesFile = new BinaryWriter(File.OpenWrite(dataFilePath)))
     {
         for (int i = 0; i < primes.Length; i++)
         {
-            if (primes[i] == 1) { 
-                primesFile.Write((uint)i);
+            if (primes[i])
+            {
+                primes[i] = CheckIsRPN.isRPN((uint)i, primes);
+
+                if (primes[i])
+                {
+                    primesFile.Write((uint)i);
+
+                }
             }
         }
     }
