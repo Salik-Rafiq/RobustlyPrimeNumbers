@@ -1,5 +1,34 @@
 ﻿// See https://aka.ms/new-console-template for more information
+const string dataFilePath = "./ListOfLTPrimes.dat";
+
 Console.WriteLine("Hello!");
+
+if (!File.Exists(dataFilePath))
+{
+    Console.WriteLine("Preparing...this may take a few minutes.");
+
+    var primes = GeneratePrimes.GeneratePrimesList();
+    //strip out the non-RPN
+    for (int i = 10; i < primes.Length; i++)
+    {
+        if (primes[i] == 1)
+        {
+            primes[i] = CheckIsRPN.isRPN((uint)i, primes);
+        }
+    }
+    //write this out to a file! we'll suck it each time below!
+    using(var primesFile = new BinaryWriter(File.OpenWrite(dataFilePath)))
+    {
+        for (int i = 0; i < primes.Length; i++)
+        {
+            if (primes[i] == 1) { 
+                primesFile.Write((uint)i);
+            }
+        }
+    }
+}
+Console.WriteLine("Ready");
+
 while (1==1) {
     bool isValid = false;
     int nthRPN = 0;
@@ -10,47 +39,26 @@ while (1==1) {
         bool isANumber = Int32.TryParse(input, out nthRPN);
         isValid = (isANumber && nthRPN > 0 && nthRPN <= 2209);
     }
+    /* save the start time to display timing */
+    DateTime startTime = DateTime.Now;
+
     FindRPN(nthRPN);
+
+    /* print timing */
+    DateTime endTime = DateTime.Now;
+    Console.WriteLine("elapsed time in milliseconds : {0}", (endTime - startTime).TotalMilliseconds);
 }
 
 void FindRPN(int nthRPN)
 {
-    /* save the start time to display timing */
-    DateTime startTime = DateTime.Now;
 
-    var primes = GeneratePrimes.GeneratePrimesList(nthRPN);
-
-    /* Mark the primes that are RPN, the first 9 can be skipped */
-    for (int i = 10; i < primes.Length; i++)
-    {
-
-        if (primes[i])
-        {
-            primes[i] = CheckIsRPN.isRPN((uint)i, primes);
-        }
-    }
-     
     /* Now find the Nth one! */
-    int currentNthPrime = 0;
-    bool found = false;
-    for (int i = 0; i < primes.Length; i++)
+    /* load the file and skip n */
+    using (var primesFile = new BinaryReader(File.OpenRead(dataFilePath)))
     {
-        if (primes[i])
-        {
-            currentNthPrime++;
-            if (currentNthPrime >= nthRPN)
-            {
-                Console.WriteLine("found RPN {0}", i);
-                found = true;
-                break;
-            }
-        }
+        primesFile.BaseStream.Position = (nthRPN-1) * sizeof(int);
+
+        int RPN = primesFile.ReadInt32(); 
+        Console.WriteLine("Found RPN: {0}", RPN);
     }
-    if (!found)
-    {
-        Console.WriteLine("did not find the {0}th on in the list. :(", nthRPN);
-    }
-    /* print timing */
-    DateTime endTime = DateTime.Now;
-    Console.WriteLine("elapsed time in milliseconds : {0}", (endTime - startTime).TotalMilliseconds);
 }
